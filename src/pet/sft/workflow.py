@@ -32,9 +32,9 @@ def run_sft(
 
     # Override the decoding parameters of Seq2SeqTrainer
     training_args.generation_max_length = training_args.generation_max_length if \
-                training_args.generation_max_length is not None else data_args.max_target_length
+        training_args.generation_max_length is not None else data_args.max_target_length
     training_args.generation_num_beams = data_args.eval_num_beams if \
-                data_args.eval_num_beams is not None else training_args.generation_num_beams
+        data_args.eval_num_beams is not None else training_args.generation_num_beams
 
     # Split the dataset
     if training_args.do_train:
@@ -43,7 +43,7 @@ def run_sft(
             trainer_kwargs = {"train_dataset": dataset["train"], "eval_dataset": dataset["test"]}
         else:
             trainer_kwargs = {"train_dataset": dataset}
-    else: # do_eval or do_predict
+    else:  # do_eval or do_predict
         trainer_kwargs = {"eval_dataset": dataset}
 
     # Initialize our Trainer
@@ -53,7 +53,7 @@ def run_sft(
         args=training_args,
         tokenizer=tokenizer,
         data_collator=data_collator,
-        callbacks=[LogCallback()]+callback_fn,
+        callbacks=[LogCallback()] + callback_fn,
         compute_metrics=ComputeMetrics(tokenizer) if training_args.predict_with_generate else None,
         **trainer_kwargs
     )
@@ -80,7 +80,7 @@ def run_sft(
     # Evaluation
     if training_args.do_eval:
         metrics = trainer.evaluate(metric_key_prefix="eval", **gen_kwargs)
-        if training_args.predict_with_generate: # eval_loss will be wrong if predict_with_generate is enabled
+        if training_args.predict_with_generate:  # eval_loss will be wrong if predict_with_generate is enabled
             metrics.pop("eval_loss", None)
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
@@ -88,7 +88,7 @@ def run_sft(
     # Predict
     if training_args.do_predict:
         predict_results = trainer.predict(dataset, metric_key_prefix="predict", **gen_kwargs)
-        if training_args.predict_with_generate: # predict_loss will be wrong if predict_with_generate is enabled
+        if training_args.predict_with_generate:  # predict_loss will be wrong if predict_with_generate is enabled
             predict_results.metrics.pop("predict_loss", None)
         trainer.log_metrics("predict", predict_results.metrics)
         trainer.save_metrics("predict", predict_results.metrics)
