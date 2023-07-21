@@ -1,0 +1,9 @@
+{
+    "eval_bleu-4": 18.691730000000003,
+    "eval_rouge-1": 40.008752,
+    "eval_rouge-2": 18.151424,
+    "eval_rouge-l": 30.360304,
+    "eval_runtime": 80.8198,
+    "eval_samples_per_second": 0.619,
+    "eval_steps_per_second": 0.087
+}
