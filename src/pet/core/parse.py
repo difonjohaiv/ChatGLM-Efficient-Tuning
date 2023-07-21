@@ -77,7 +77,7 @@ def get_train_args(
         logger.warning("`ddp_find_unused_parameters` needs to be set as False in DDP training.")
         training_args.ddp_find_unused_parameters = False
 
-    training_args.optim = "adamw_torch" if training_args.optim == "adamw_hf" else training_args.optim # suppress warning
+    training_args.optim = "adamw_torch" if training_args.optim == "adamw_hf" else training_args.optim  # suppress warning
 
     if model_args.quantization_bit is not None:
         if training_args.fp16:
