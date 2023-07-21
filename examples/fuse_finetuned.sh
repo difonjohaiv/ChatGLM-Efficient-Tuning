@@ -13,6 +13,6 @@ python ../src/export_model.py \
     --model_name_or_path ..\\glm2-6b \
     --finetuning_type lora \
     --dataset_dir ..\\data \
-    --checkpoint_dir ..\\sft-ckp \
+    --checkpoint_dir ..\\sft-ckp\\checkpoint-146000 \
     --output_dir ..\\lora-glm2 \
     --use_v2
