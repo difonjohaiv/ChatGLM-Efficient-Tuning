@@ -4,5 +4,7 @@
 
 python ../src/export_model.py \
     --checkpoint_dir ..\\sft-ckp \
+    --model_name_or_path ..\\glm2-6b \
     --dataset_dir ..\\data \
-    --output_dir ..\\lora_glm2
+    --output_dir ..\\lora-glm2 \
+    --use_v2
