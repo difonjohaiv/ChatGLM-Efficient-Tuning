@@ -56,9 +56,9 @@ def load_model_and_tokenizer(
             if finetuning_args.finetuning_type == "full":
                 raise ValueError("Full-parameter fine-tuning does not support quantization.")
             elif finetuning_args.finetuning_type == "p_tuning":
-                quantization = "cpm" # use cpm's quantization
+                quantization = "cpm"  # use cpm's quantization
             else:
-                quantization = "bnb" # use bnb's quantization
+                quantization = "bnb"  # use bnb's quantization
         else:
             quantization = "cpm"
 
@@ -83,7 +83,7 @@ def load_model_and_tokenizer(
 
     # P-Tuning v2 configurations. Use the built-in p-tuning method of ChatGLM.
     if finetuning_args.finetuning_type == "p_tuning":
-        config.pre_seq_len = finetuning_args.pre_seq_len # enable this will fix other parameters automatically
+        config.pre_seq_len = finetuning_args.pre_seq_len  # enable this will fix other parameters automatically
         config.prefix_projection = finetuning_args.prefix_projection
 
     # Quantization configurations for Full, Freeze and LoRA in training (using bitsandbytes library).
@@ -145,26 +145,26 @@ def load_model_and_tokenizer(
     model = init_adapter(model, model_args, finetuning_args, is_trainable)
 
     if not is_trainable:
-        model.requires_grad_(False) # fix all model params
-        model = model.half() # cast all params to float16 for inference
+        model.requires_grad_(False)  # fix all model params
+        model = model.half()  # cast all params to float16 for inference
 
     # Quantization with the built-in method for P-Tuning v2 training or evaluation.
     # Model parameters should be cast to float16 in quantized P-Tuning setting.
     if quantization == "cpm":
-        if is_trainable: # convert all params into half precision except prefix_encoder in training
+        if is_trainable:  # convert all params into half precision except prefix_encoder in training
             for name, param in model.named_parameters():
                 if "prefix_encoder" not in name:
                     param.data = param.data.to(torch.float16)
 
-        model.quantize(model_args.quantization_bit) # built-in method in ChatGLM-6B, also an in-place operation
+        model.quantize(model_args.quantization_bit)  # built-in method in ChatGLM-6B, also an in-place operation
 
     if quantization is not None:
         logger.info("Quantized model to {} bit.".format(model_args.quantization_bit))
 
-    if stage == "rm" or stage == "ppo": # add value head
+    if stage == "rm" or stage == "ppo":  # add value head
         model = AutoModelForCausalLMWithValueHead.from_pretrained(model)
 
-        if stage == "rm" and model_args.checkpoint_dir is not None: # load valuehead weights to evaluate reward model
+        if stage == "rm" and model_args.checkpoint_dir is not None:  # load valuehead weights to evaluate reward model
             logger.warning("Only the last checkpoint containing valuehead will be loaded as the valuehead.")
             if load_valuehead_params(model, model_args.checkpoint_dir[-1]):
                 model.v_head.load_state_dict({
@@ -172,7 +172,7 @@ def load_model_and_tokenizer(
                     "summary.bias": getattr(model, "reward_head_bias")
                 })
 
-        if stage == "ppo": # load reward model
+        if stage == "ppo":  # load reward model
             assert is_trainable, "PPO stage cannot be performed at evaluation."
             assert model_args.reward_model is not None, "Reward model is necessary for PPO training."
             logger.info("Load reward model from {}".format(model_args.reward_model))

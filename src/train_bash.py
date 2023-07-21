@@ -5,6 +5,7 @@ def main():
 
     model_args, data_args, training_args, finetuning_args, general_args = get_train_args()
     if general_args.stage == "sft":
+        print(model_args.model_name_or_path)
         run_sft(model_args, data_args, training_args, finetuning_args)
     elif general_args.stage == "rm":
         run_rm(model_args, data_args, training_args, finetuning_args)
